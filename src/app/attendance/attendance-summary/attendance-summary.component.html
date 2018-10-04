@@ -1,0 +1,190 @@
+<style>
+    .badge {
+        background-color: white !important;
+        color: black !important;
+        font-weight:normal !important;
+    }
+    .table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
+    padding:1px !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-9">
+      <div class="row">
+          <div class="col-sm-12">
+              <form class="form-inline  ml-6">
+                  <div class="form-group mr-3">
+                      <label class="mr-3" for="txtEmail">Attendance Report of&nbsp;</label>
+                      <div class="input-group input-group-sm">
+                          <input type="email" name="email" #email="ngModel" [(ngModel)]="filterCriteria.EmailID" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2">
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">@tblocks.com</span>
+                          </div>
+                        </div>
+                  </div>
+                  <div class="form-group mr-3">
+                      <span><b>for</b></span>
+                  </div>
+                  <div class="form-group mr-3">
+                      <select class="form-control form-control-sm" name="month" #month="ngModel" [(ngModel)] = "filterCriteria.Month">
+                          <option [value]="0">Month</option>
+                          <option [value]="1">Jan</option>
+                          <option [value]="2">Feb</option>
+                          <option [value]="3">Mar</option>
+                          <option [value]="4">Apr</option>
+                          <option [value]="5">May</option>
+                          <option [value]="6">Jun</option>
+                          <option [value]="7">Jul</option>
+                          <option [value]="8">Aug</option>
+                          <option [value]="9">Sep</option>
+                          <option [value]="10">Oct</option>
+                          <option [value]="11">Nov</option>
+                          <option [value]="12">Dec</option>
+                      </select>
+                  </div>
+                  <div class="form-group mr-3" >
+                      <select class="form-control form-control-sm" name="year" #year="ngModel" [(ngModel)] = "filterCriteria.Year">
+                          <option [value]="0">Year</option>
+                          <option *ngFor="let year of ListOfYear" [value]="year">{{year}}</option>
+                      </select>
+                  </div>
+                  <button type="button" (click)="GetAttendanceSummaryByEmailID()" class="btn btn-primary btn-sm">Go</button>
+              </form>
+          </div>
+          <div class="col-sm-1">
+              <div class="hidden-sm hidden-xs">&nbsp;</div>
+              <img src="../../../assets/avtar.png" alt="employee-photo" class="img-thumbnail img-responsive" />
+          </div>
+          <div class="col-sm-3">
+              <div class="hidden-sm hidden-xs">&nbsp;</div>
+              <h5><b>{{attendanceSummaryService.attendanceSummary[0].EmployeeName}}</b></h5>
+              <small>Sr. Software Engineer</small><br />
+              <small>Techblocks - Ahmedabad</small>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+
+        <table class="table table-hover table-bordered table-condensed">
+            <tr class="pl-1">
+                <td>Work Days</td>
+                <td><span class="badge">22 days</span></td>
+            </tr>
+            <tr>
+                <td>Absences</td>
+                <td><span class="badge">1 days</span></td>
+            </tr>
+            <tr>
+                <td>Actual Work Hrs</td>
+                <td><span class="badge">190 hrs</span></td>
+            </tr>
+            <tr>
+                <td>Edited Work Hrs</td>
+                <td><span class="badge">3 hrs</span></td>
+            </tr>
+            <tr>
+                <td>Extra/Deficit Work Hrs</td>
+                <td><span class="badge">0.5 hrs</span></td>
+            </tr>
+            <tr>
+                <td>Leaves</td>
+                <td><span class="badge">3.5/18 days</span></td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-sm table-bordered">
+                <thead>
+                    <tr  class="text-center">
+                        <th scope="col" style="width: 10%">Date</th>
+                        <th scope="col" style="width: 10%">Shift</th>
+                        <th scope="col" style="width: 15%">In-Time</th>
+                        <th scope="col" style="width: 15%">Out-Time</th>
+                        <th scope="col" style="width: 15%">Work Hours</th>
+                        <th scope="col" style="width: 15%">Extra/Deficit Hours</th>
+                        <th scope="col" style="width: 10%">Edit</th>
+                        <th scope="col" style="width: 10%">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr *ngFor="let item of attendanceSummaryService.attendanceSummary" class="text-center">
+                            <th scope="row">{{item.Date | date:'dd'}}</th>
+                            <td>{{item.Shift}}</td>
+                            <td>{{item.InTime}}</td>
+                            <td>{{item.OutTime}}</td>
+                            <td>{{item.WorkHours}}</td>
+                            <td>{{item.ExtraDeficitHours}}</td>
+                            <td>
+                                <a href="" *ngIf="item.Status != '-'" data-toggle="modal" data-target="#editAttendance">Edit</a>
+                            </td>
+                            <td>{{item.AttendanceStatus}}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editAttendance" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Edit Attendence</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline">
+
+                    <div class="form-group">
+                        <label for="txtEmail">Attendance Report of </label>
+                        <input type="email" class="form-control" id="txtEmail" name="EmailID" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <span> for </span>
+                    </div> 
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Month
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Year
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
